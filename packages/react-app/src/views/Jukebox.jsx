@@ -1,44 +1,61 @@
 import { Button } from "antd";
+import axios from "axios";
 import { useEffect, useState } from "react";
 
 function Jukebox() {
-  const [userQuery, setUserQuery] = useState("");
   const [results, setResults] = useState([]);
   const [token, setToken] = useState("");
+  const [searchKey, setSearchKey] = useState("");
+  const [artists, setArtists] = useState([]);
 
-  const fetchTracks = (albumId, callback) => {
-    fetch({
-      url: "https://api.spotify.com/v1/albums/" + albumId,
-      success: function (response) {
-        callback(response);
+  // const fetchTracks = (albumId, callback) => {
+  //   fetch({
+  //     url: "https://api.spotify.com/v1/albums/" + albumId,
+  //     success: function (response) {
+  //       callback(response);
+  //     },
+  //   });
+  // };
+
+  // const searchAlbums = query => {
+  //   fetch({
+  //     url: "https://api.spotify.com/v1/search",
+  //     data: {
+  //       q: query,
+  //       type: "album",
+  //     },
+  //     success: function (response) {
+  //       // todo: add error handling
+  //       console.log("response", response);
+  //       setResults(response);
+  //     },
+  //   });
+  // };
+
+  const searchArtists = async () => {
+    // todo: move to backend
+    const { data } = await axios.get("https://api.spotify.com/v1/search", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      params: {
+        q: searchKey,
+        type: "artist",
       },
     });
-  };
 
-  const searchAlbums = query => {
-    fetch({
-      url: "https://api.spotify.com/v1/search",
-      data: {
-        q: query,
-        type: "album",
-      },
-      success: function (response) {
-        // todo: add error handling
-        console.log("response", response);
-        setResults(response);
-      },
-    });
+    setArtists(data.artists.items);
   };
 
   const onQueryChange = e => {
     console.log("e.target.value", e.target.value);
-    setUserQuery(e.target.value);
+    setSearchKey(e.target.value);
   };
 
   const submitSearch = e => {
     e.preventDefault();
-    console.log("searching for", userQuery);
-    searchAlbums(userQuery);
+    console.log("searching for", searchKey);
+    searchArtists(searchKey);
   };
 
   const logout = () => {
@@ -64,6 +81,18 @@ function Jukebox() {
     setToken(token);
   }, []);
 
+  const renderArtists = () => {
+    return artists.map(artist => {
+      console.log("artist", artist);
+      return (
+        <div style={{ height: "200px", width: "200px" }} key={artist.id}>
+          {artist.images.length ? <img width={"100%"} src={artist.images[0].url} alt="" /> : <div>No Image</div>}
+          {artist.name}
+        </div>
+      );
+    });
+  };
+
   return (
     <div class="container">
       {!token ? (
@@ -75,7 +104,9 @@ function Jukebox() {
         </a>
       ) : (
         <div>
-          <button onClick={logout}>Logout</button>
+          <button style={{ marginTop: "20px", color: "black" }} onClick={logout}>
+            Logout
+          </button>
           <h1>Search for an Artist</h1>
           <p>
             Type an artist name and click on "Search". Then, click on any album from the results to play 30 seconds of
@@ -88,7 +119,7 @@ function Jukebox() {
               onChange={e => {
                 onQueryChange(e);
               }}
-              value={userQuery}
+              value={searchKey}
               placeholder="Type an Artist Name"
             />
             <Button
@@ -99,7 +130,7 @@ function Jukebox() {
               Search
             </Button>
           </div>
-          <div id="results"></div>
+          <div style={{ flex: "auto", flexDirection: "row" }}>{renderArtists()}</div>
         </div>
       )}
     </div>
