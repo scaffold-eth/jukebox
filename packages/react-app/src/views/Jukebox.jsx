@@ -1,6 +1,7 @@
 import { Button } from "antd";
 import axios from "axios";
 import { useEffect, useState } from "react";
+import SpotifyPlayer from "react-spotify-player";
 
 function Jukebox() {
   const [results, setResults] = useState([]);
@@ -85,12 +86,23 @@ function Jukebox() {
     return artists.map(artist => {
       console.log("artist", artist);
       return (
-        <div
-          style={{ height: "200px", width: "200px", padding: "5px", display: "flex", flexGrow: "initial" }}
-          key={artist.id}
-        >
-          {artist.images.length ? <img width={"100%"} src={artist.images[0].url} alt="" /> : <div>No Image</div>}
-          {artist.name}
+        <div>
+          <div
+            style={{ height: "200px", width: "200px", padding: "5px", display: "flex", flexGrow: "initial" }}
+            key={artist.id}
+          >
+            <div style={{ borderRadius: "5px" }}>
+              {artist.images.length ? <img width={"100%"} src={artist.images[0].url} alt="" /> : <div>No Image</div>}
+            </div>
+            <span style={{ padding: "5px" }}>{artist.name}</span>
+          </div>
+          <div style={{ padding: "5px" }}>
+            {artist.uri ? (
+              <SpotifyPlayer uri={artist.uri} size={{ width: "100%", height: 80 }} view="list" theme="black" />
+            ) : (
+              <span>No URI</span>
+            )}
+          </div>
         </div>
       );
     });
