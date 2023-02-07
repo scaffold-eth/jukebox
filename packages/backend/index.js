@@ -20,9 +20,9 @@ const redirectUri = "redirectUri"; // Your redirect uri
  * @param  {number} length The length of the string
  * @return {string} The generated string
  */
-const generateRandomString = function (length) {
-  let text = "";
-  const possible =
+var generateRandomString = function (length) {
+  var text = "";
+  var possible =
     "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 
   // eslint-disable-next-line no-plusplus
@@ -32,6 +32,22 @@ const generateRandomString = function (length) {
   return text;
 };
 
+var stateKey = "spotify_auth_state";
+
+var app = express();
+
+app
+  .use(express.static(__dirname + "/public"))
+  .use(cors())
+  .use(cookieParser());
+
+app.get("/login", function (req, res) {
+  var state = generateRandomString(16);
+  res.cookie(stateKey, state);
+
+  // your application requests authorization
+  var scope = "user-read-private user-read-email";
+=======
 const stateKey = "spotify_auth_state";
 
 const app = express();
@@ -71,6 +87,7 @@ app.get("/callback", function (req, res) {
     );
   } else {
     res.clearCookie(stateKey);
+
     const authOptions = {
       url: "https://accounts.spotify.com/api/token",
       form: {
