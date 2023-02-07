@@ -5,7 +5,6 @@ import { BrowserRouter } from "react-router-dom";
 import ReactDOM from "react-dom";
 import App from "./App";
 import "./index.css";
-import StateContext from "./context/StateContext";
 
 const themes = {
   dark: `${process.env.PUBLIC_URL}/dark-theme.css`,
@@ -25,9 +24,7 @@ ReactDOM.render(
   <ApolloProvider client={client}>
     <ThemeSwitcherProvider themeMap={themes} defaultTheme={prevTheme || "light"}>
       <BrowserRouter>
-        <StateContext>
-          <App subgraphUri={subgraphUri} />
-        </StateContext>
+        <App subgraphUri={subgraphUri} />
       </BrowserRouter>
     </ThemeSwitcherProvider>
   </ApolloProvider>,
