@@ -85,7 +85,10 @@ function Jukebox() {
     return artists.map(artist => {
       console.log("artist", artist);
       return (
-        <div style={{ height: "200px", width: "200px" }} key={artist.id}>
+        <div
+          style={{ height: "200px", width: "200px", padding: "5px", display: "flex", flexGrow: "initial" }}
+          key={artist.id}
+        >
           {artist.images.length ? <img width={"100%"} src={artist.images[0].url} alt="" /> : <div>No Image</div>}
           {artist.name}
         </div>
@@ -130,7 +133,9 @@ function Jukebox() {
               Search
             </Button>
           </div>
-          <div style={{ flex: "auto", flexDirection: "row" }}>{renderArtists()}</div>
+          <div style={{ display: "flex", flexDirection: "row", flexWrap: "wrap", padding: "5px" }}>
+            {renderArtists()}
+          </div>
         </div>
       )}
     </div>
