@@ -1,9 +1,10 @@
+import { Button } from "antd";
+import { useEffect, useState } from "react";
+
 function Jukebox() {
-  // const templateSource = document.getElementById("results-template").innerHTML;
-  // const template = Handlebars.compile(templateSource);
-  const resultsPlaceholder = document.getElementById("results");
-  const playingCssClass = "playing";
-  const audioObject = null;
+  const [userQuery, setUserQuery] = useState("");
+  const [results, setResults] = useState([]);
+  const [token, setToken] = useState("");
 
   const fetchTracks = (albumId, callback) => {
     fetch({
@@ -22,36 +23,85 @@ function Jukebox() {
         type: "album",
       },
       success: function (response) {
-        // resultsPlaceholder.innerHTML = template(response);
+        // todo: add error handling
         console.log("response", response);
+        setResults(response);
       },
     });
   };
 
-  // document.getElementById("search-form").addEventListener(
-  //   "submit",
-  //   function (e) {
-  //     e.preventDefault();
-  //     searchAlbums(document.getElementById("query").value);
-  //   },
-  //   false,
-  // );
+  const onQueryChange = e => {
+    console.log("e.target.value", e.target.value);
+    setUserQuery(e.target.value);
+  };
+
+  const submitSearch = e => {
+    e.preventDefault();
+    console.log("searching for", userQuery);
+    searchAlbums(userQuery);
+  };
+
+  const logout = () => {
+    setToken("");
+    window.localStorage.removeItem("token");
+  };
+
+  useEffect(() => {
+    const hash = window.location.hash;
+    let token = window.localStorage.getItem("token");
+
+    if (!token && hash) {
+      token = hash
+        .substring(1)
+        .split("&")
+        .find(elem => elem.startsWith("access_token"))
+        .split("=")[1];
+
+      window.location.hash = "";
+      window.localStorage.setItem("token", token);
+    }
+
+    setToken(token);
+  }, []);
 
   return (
-    <div>
-      <div class="container">
-        <h1>Search for an Artist</h1>
-        <p>
-          Type an artist name and click on "Search". Then, click on any album from the results to play 30 seconds of its
-          first track.
-        </p>
-        <form id="search-form">
-          <input type="text" id="query" value="" class="form-control" placeholder="Type an Artist Name" />
-          <input type="submit" id="search" class="btn btn-primary" value="Search" />
-        </form>
-        <div id="results"></div>
-      </div>
-      {/* loop over the results */}
+    <div class="container">
+      {!token ? (
+        <a
+          style={{ marginTop: "20px" }}
+          href={`${process.env.REACT_APP_AUTH_ENDPOINT}?client_id=${process.env.REACT_APP_SPOTIFY_CLIENT_ID}&redirect_uri=${process.env.REACT_APP_REDIRECT_URI}&response_type=${process.env.REACT_APP_RESPONSE_TYPE}`}
+        >
+          Login to Spotify
+        </a>
+      ) : (
+        <div>
+          <button onClick={logout}>Logout</button>
+          <h1>Search for an Artist</h1>
+          <p>
+            Type an artist name and click on "Search". Then, click on any album from the results to play 30 seconds of
+            its first track.
+          </p>
+          <div id="search-form">
+            <input
+              style={{ color: "black" }}
+              type="text"
+              onChange={e => {
+                onQueryChange(e);
+              }}
+              value={userQuery}
+              placeholder="Type an Artist Name"
+            />
+            <Button
+              onClick={e => {
+                submitSearch(e);
+              }}
+            >
+              Search
+            </Button>
+          </div>
+          <div id="results"></div>
+        </div>
+      )}
     </div>
   );
 }
