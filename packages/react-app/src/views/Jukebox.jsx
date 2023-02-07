@@ -141,11 +141,10 @@ function Jukebox() {
           <button style={{ marginTop: "20px", color: "black" }} onClick={logout}>
             Logout
           </button>
-          <h1>Search for an Artist</h1>
-          <p>
-            Type an artist name and click on "Search". Then, click on any album from the results to play 30 seconds of
-            its first track.
-          </p>
+          <h1>
+            Search for {searchType === "artist" ? "an" : "a"} {searchType}
+          </h1>
+          <p>Type an {searchType} name and click on "Search".</p>
           <div id="search-form">
             <Radio.Group
               onChange={e => {
