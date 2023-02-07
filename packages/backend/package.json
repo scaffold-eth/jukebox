@@ -1,0 +1,27 @@
+{
+  "name": "@scaffold-eth/backend",
+  "version": "1.0.0",
+  "description": "Spotify backend for jukebox app",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/scaffold-eth/jukebox.git"
+  },
+  "keywords": [
+    "spotify",
+    "scaffold-eth",
+    "jukebox"
+  ],
+  "author": "jaxcoder",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/scaffold-eth/jukebox/issues"
+  },
+  "homepage": "https://github.com/scaffold-eth/jukebox#readme",
+  "dependencies": {
+    "express": "^4.18.2"
+  }
+}
