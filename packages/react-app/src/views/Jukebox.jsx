@@ -2,9 +2,10 @@ import { Button } from "antd";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import SpotifyPlayer from "react-spotify-player";
+// import Player from "../components/Player";
 
 function Jukebox() {
-  const [results, setResults] = useState([]);
+  // const [results, setResults] = useState([]);
   const [token, setToken] = useState("");
   const [searchKey, setSearchKey] = useState("");
   const [artists, setArtists] = useState([]);
@@ -98,7 +99,10 @@ function Jukebox() {
           </div>
           <div style={{ padding: "5px" }}>
             {artist.uri ? (
-              <SpotifyPlayer uri={artist.uri} size={{ width: "100%", height: 80 }} view="list" theme="black" />
+              <div>
+                <SpotifyPlayer uri={artist.uri} size={{ width: "100%", height: 80 }} view="list" theme="black" />
+                {/* todo: <Player artist={artist} isPlaying={false} progressMs={0} /> */}
+              </div>
             ) : (
               <span>No URI</span>
             )}
@@ -128,6 +132,7 @@ function Jukebox() {
             its first track.
           </p>
           <div id="search-form">
+            {/* todo: add a select for which type of search they want ie: artist, track, etc. */}
             <input
               style={{ color: "black" }}
               type="text"
