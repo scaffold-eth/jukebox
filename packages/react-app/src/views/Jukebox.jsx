@@ -2,6 +2,7 @@ import { Button, Radio } from "antd";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import SpotifyPlayer from "react-spotify-player";
+import TrackList from "../components/TrackList";
 // import Player from "../components/Player";
 
 function Jukebox() {
@@ -12,14 +13,14 @@ function Jukebox() {
   const [artists, setArtists] = useState([]);
   const [tracks, setTracks] = useState([]);
 
-  const fetchTracks = (albumId, callback) => {
-    fetch({
-      url: "https://api.spotify.com/v1/albums/" + albumId,
-      success: function (response) {
-        callback(response);
-      },
-    });
-  };
+  // const fetchTracks = (albumId, callback) => {
+  //   fetch({
+  //     url: "https://api.spotify.com/v1/albums/" + albumId,
+  //     success: function (response) {
+  //       callback(response);
+  //     },
+  //   });
+  // };
 
   // const searchAlbums = query => {
   //   fetch({
@@ -144,7 +145,9 @@ function Jukebox() {
           <h1>
             Search for {searchType === "artist" ? "an" : "a"} {searchType}
           </h1>
-          <p>Type an {searchType} name and click on "Search".</p>
+          <p>
+            Type {searchType === "artist" ? "an" : "a"} {searchType} name and click on "Search".
+          </p>
           <div id="search-form">
             <Radio.Group
               onChange={e => {
@@ -174,8 +177,17 @@ function Jukebox() {
               Search
             </Button>
           </div>
-          <div style={{ display: "flex", flexDirection: "row", flexWrap: "wrap", padding: "5px" }}>
-            {renderArtists()}
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              flexWrap: "wrap",
+              marginTop: "15px",
+              padding: "5px",
+            }}
+          >
+            {searchType === "artist" && artists.length ? renderArtists() : null}
+            {searchType === "track" && tracks.length ? <TrackList tracks={tracks} /> : null}
           </div>
         </div>
       )}
