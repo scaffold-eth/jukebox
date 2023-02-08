@@ -1,14 +1,16 @@
-import { Button } from "antd";
+import { Button, Radio } from "antd";
 import axios from "axios";
 import { useEffect, useState } from "react";
-import SpotifyPlayer from "react-spotify-player";
-// import Player from "../components/Player";
+import TrackList from "../components/TrackList";
+import ArtistList from "../components/ArtistList";
 
 function Jukebox() {
   // const [results, setResults] = useState([]);
   const [token, setToken] = useState("");
   const [searchKey, setSearchKey] = useState("");
+  const [searchType, setSearchType] = useState("artist");
   const [artists, setArtists] = useState([]);
+  const [tracks, setTracks] = useState([]);
 
   // const fetchTracks = (albumId, callback) => {
   //   fetch({
@@ -34,19 +36,36 @@ function Jukebox() {
   //   });
   // };
 
-  const searchArtists = async () => {
+  const search = async () => {
+    // todo: add track search
+    // if (searchType === "track") {
+    //   fetchTracks(albumId, () => {});
+    // }
     // todo: move to backend
-    const { data } = await axios.get("https://api.spotify.com/v1/search", {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-      params: {
-        q: searchKey,
-        type: "artist",
-      },
-    });
-
-    setArtists(data.artists.items);
+    await axios
+      .get("https://api.spotify.com/v1/search", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        params: {
+          q: searchKey,
+          type: searchType ?? "artist",
+        },
+      })
+      .then(res => {
+        console.log("res", res);
+        if (searchType === "artist") {
+          setArtists(res.data.artists.items);
+        }
+        if (searchType === "track") {
+          setTracks(res.data.tracks.items);
+        }
+      })
+      .catch(err => {
+        console.log("err", { err });
+        alert(err.message);
+        return err.message;
+      });
   };
 
   const onQueryChange = e => {
@@ -57,7 +76,7 @@ function Jukebox() {
   const submitSearch = e => {
     e.preventDefault();
     console.log("searching for", searchKey);
-    searchArtists(searchKey);
+    search(searchKey);
   };
 
   const logout = () => {
@@ -83,33 +102,9 @@ function Jukebox() {
     setToken(token);
   }, []);
 
-  const renderArtists = () => {
-    return artists.map(artist => {
-      console.log("artist", artist);
-      return (
-        <div>
-          <div
-            style={{ height: "200px", width: "200px", padding: "5px", display: "flex", flexGrow: "initial" }}
-            key={artist.id}
-          >
-            <div style={{ borderRadius: "5px" }}>
-              {artist.images.length ? <img width={"100%"} src={artist.images[0].url} alt="" /> : <div>No Image</div>}
-            </div>
-            <span style={{ padding: "5px" }}>{artist.name}</span>
-          </div>
-          <div style={{ padding: "5px" }}>
-            {artist.uri ? (
-              <div>
-                <SpotifyPlayer uri={artist.uri} size={{ width: "100%", height: 80 }} view="list" theme="black" />
-                {/* todo: <Player artist={artist} isPlaying={false} progressMs={0} /> */}
-              </div>
-            ) : (
-              <span>No URI</span>
-            )}
-          </div>
-        </div>
-      );
-    });
+  const searchTypeChanged = e => {
+    setSearchKey("");
+    setSearchType(e.target.value);
   };
 
   return (
@@ -126,21 +121,32 @@ function Jukebox() {
           <button style={{ marginTop: "20px", color: "black" }} onClick={logout}>
             Logout
           </button>
-          <h1>Search for an Artist</h1>
+          <h1>
+            Search for {searchType === "artist" ? "an" : "a"} {searchType}
+          </h1>
           <p>
-            Type an artist name and click on "Search". Then, click on any album from the results to play 30 seconds of
-            its first track.
+            Type {searchType === "artist" ? "an" : "a"} {searchType} name and click on "Search".
           </p>
           <div id="search-form">
+            <Radio.Group
+              onChange={e => {
+                searchTypeChanged(e);
+              }}
+              defaultValue="artist"
+              buttonStyle="solid"
+            >
+              <Radio.Button value="artist">Artist</Radio.Button>
+              <Radio.Button value="track">Track</Radio.Button>
+            </Radio.Group>
             {/* todo: add a select for which type of search they want ie: artist, track, etc. */}
             <input
-              style={{ color: "black" }}
+              style={{ color: "black", margin: "10px" }}
               type="text"
               onChange={e => {
                 onQueryChange(e);
               }}
               value={searchKey}
-              placeholder="Type an Artist Name"
+              placeholder={`Type ${searchType} name...`}
             />
             <Button
               onClick={e => {
@@ -150,8 +156,17 @@ function Jukebox() {
               Search
             </Button>
           </div>
-          <div style={{ display: "flex", flexDirection: "row", flexWrap: "wrap", padding: "5px" }}>
-            {renderArtists()}
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              flexWrap: "wrap",
+              marginTop: "15px",
+              padding: "5px",
+            }}
+          >
+            {searchType === "artist" && artists.length ? <ArtistList artists={artists} /> : null}
+            {searchType === "track" && tracks.length ? <TrackList tracks={tracks} /> : null}
           </div>
         </div>
       )}
