@@ -64,7 +64,7 @@ const StateContext = ({ children }) => {
   const [injectedProvider, setInjectedProvider] = useState();
   const [address, setAddress] = useState();
   const [selectedNetwork, setSelectedNetwork] = useState(networkOptions[0]);
-  const [contract, setContract] = useState(null);
+  // const [contract, setContract] = useState(null);
   const targetNetwork = NETWORKS[selectedNetwork];
 
   // 🔭 block explorer URL
@@ -276,7 +276,7 @@ const StateContext = ({ children }) => {
         readContracts,
         writeContracts,
         mainnetContracts,
-        contract,
+        // contract,
 
         tx,
         contractConfig,

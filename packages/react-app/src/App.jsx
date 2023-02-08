@@ -1,10 +1,6 @@
 import { Button, Col, Menu, Row } from "antd";
 
 import "antd/dist/antd.css";
-import {
-  useContractReader,
-  // useOnBlock,
-} from "eth-hooks";
 
 import { Link, Route, Switch, useLocation } from "react-router-dom";
 import "./App.css";
@@ -20,9 +16,9 @@ import {
   FaucetHint,
   NetworkSwitch,
 } from "./components";
-import { NETWORKS, ALCHEMY_KEY } from "./constants";
+import { NETWORKS } from "./constants";
 
-import { Home, ExampleUI, Hints, Subgraph, Jukebox } from "./views";
+import { Jukebox } from "./views";
 import { useStateContext } from "./context/StateContext";
 
 const { ethers } = require("ethers");
@@ -58,19 +54,17 @@ function App(props) {
     price,
     address,
     mainnetProvider,
-    mainnetContracts,
-    writeContracts,
-    readContracts,
+
     loadWeb3Modal,
     faucetAvailable,
     contractConfig,
-    tx,
+
     yourLocalBalance,
     blockExplorer,
     localChainId,
     localProvider,
     selectedChainId,
-    localProviderPollingTime,
+
     selectedNetwork,
     setSelectedNetwork,
     targetNetwork,
