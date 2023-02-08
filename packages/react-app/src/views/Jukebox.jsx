@@ -1,14 +1,17 @@
-import { Button } from "antd";
+import { Button, Radio } from "antd";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import SpotifyPlayer from "react-spotify-player";
+import TrackList from "../components/TrackList";
 // import Player from "../components/Player";
 
 function Jukebox() {
   // const [results, setResults] = useState([]);
   const [token, setToken] = useState("");
   const [searchKey, setSearchKey] = useState("");
+  const [searchType, setSearchType] = useState("artist");
   const [artists, setArtists] = useState([]);
+  const [tracks, setTracks] = useState([]);
 
   // const fetchTracks = (albumId, callback) => {
   //   fetch({
@@ -34,7 +37,11 @@ function Jukebox() {
   //   });
   // };
 
-  const searchArtists = async () => {
+  const search = async () => {
+    // todo: add track search
+    // if (searchType === "track") {
+    //   fetchTracks(albumId, () => {});
+    // }
     // todo: move to backend
     const { data } = await axios.get("https://api.spotify.com/v1/search", {
       headers: {
@@ -42,11 +49,16 @@ function Jukebox() {
       },
       params: {
         q: searchKey,
-        type: "artist",
+        type: searchType ?? "artist",
       },
     });
 
-    setArtists(data.artists.items);
+    if (searchType === "artist") {
+      setArtists(data.artists.items);
+    }
+    if (searchType === "track") {
+      setTracks(data.tracks.items);
+    }
   };
 
   const onQueryChange = e => {
@@ -57,7 +69,7 @@ function Jukebox() {
   const submitSearch = e => {
     e.preventDefault();
     console.log("searching for", searchKey);
-    searchArtists(searchKey);
+    search(searchKey);
   };
 
   const logout = () => {
@@ -82,6 +94,10 @@ function Jukebox() {
 
     setToken(token);
   }, []);
+
+  const searchTypeChanged = e => {
+    setSearchType(e.target.value);
+  };
 
   const renderArtists = () => {
     return artists.map(artist => {
@@ -126,21 +142,32 @@ function Jukebox() {
           <button style={{ marginTop: "20px", color: "black" }} onClick={logout}>
             Logout
           </button>
-          <h1>Search for an Artist</h1>
+          <h1>
+            Search for {searchType === "artist" ? "an" : "a"} {searchType}
+          </h1>
           <p>
-            Type an artist name and click on "Search". Then, click on any album from the results to play 30 seconds of
-            its first track.
+            Type {searchType === "artist" ? "an" : "a"} {searchType} name and click on "Search".
           </p>
           <div id="search-form">
+            <Radio.Group
+              onChange={e => {
+                searchTypeChanged(e);
+              }}
+              defaultValue="artist"
+              buttonStyle="solid"
+            >
+              <Radio.Button value="artist">Artist</Radio.Button>
+              <Radio.Button value="track">Track</Radio.Button>
+            </Radio.Group>
             {/* todo: add a select for which type of search they want ie: artist, track, etc. */}
             <input
-              style={{ color: "black" }}
+              style={{ color: "black", margin: "10px" }}
               type="text"
               onChange={e => {
                 onQueryChange(e);
               }}
               value={searchKey}
-              placeholder="Type an Artist Name"
+              placeholder={`Type ${searchType} name...`}
             />
             <Button
               onClick={e => {
@@ -150,8 +177,17 @@ function Jukebox() {
               Search
             </Button>
           </div>
-          <div style={{ display: "flex", flexDirection: "row", flexWrap: "wrap", padding: "5px" }}>
-            {renderArtists()}
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              flexWrap: "wrap",
+              marginTop: "15px",
+              padding: "5px",
+            }}
+          >
+            {searchType === "artist" && artists.length ? renderArtists() : null}
+            {searchType === "track" && tracks.length ? <TrackList tracks={tracks} /> : null}
           </div>
         </div>
       )}
