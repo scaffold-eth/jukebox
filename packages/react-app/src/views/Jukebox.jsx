@@ -3,6 +3,8 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import TrackList from "../components/TrackList";
 import ArtistList from "../components/ArtistList";
+import { SpotifyLogin } from "../components";
+import WebPlayback from "../components/WebPlayback";
 
 function Jukebox() {
   // const [results, setResults] = useState([]);
@@ -85,21 +87,15 @@ function Jukebox() {
   };
 
   useEffect(() => {
-    const hash = window.location.hash;
-    let token = window.localStorage.getItem("token");
-
-    if (!token && hash) {
-      token = hash
-        .substring(1)
-        .split("&")
-        .find(elem => elem.startsWith("access_token"))
-        .split("=")[1];
-
-      window.location.hash = "";
-      window.localStorage.setItem("token", token);
+    async function getToken() {
+      //todo to move in a hook or something
+      const response = await fetch("/auth/token");
+      const json = await response.json();
+      setToken(json.accessToken);
+      window.localStorage.setItem("token", json.accessToken);
     }
-
-    setToken(token);
+    //todo manage refresh token
+    getToken();
   }, []);
 
   const searchTypeChanged = e => {
@@ -110,12 +106,7 @@ function Jukebox() {
   return (
     <div className="">
       {!token ? (
-        <a
-          className="mt-5"
-          href={`${process.env.REACT_APP_AUTH_ENDPOINT}?client_id=${process.env.REACT_APP_SPOTIFY_CLIENT_ID}&redirect_uri=${process.env.REACT_APP_REDIRECT_URI}&response_type=${process.env.REACT_APP_RESPONSE_TYPE}`}
-        >
-          Login to Spotify
-        </a>
+        <SpotifyLogin />
       ) : (
         <div>
           <button className="mt-5 text-black" onClick={logout}>
@@ -158,8 +149,9 @@ function Jukebox() {
           </div>
           <div className="flex flex-wrap justify-center items-center  mt-[15px] p-[5px]">
             {searchType === "artist" && artists.length ? <ArtistList artists={artists} /> : null}
-            {searchType === "track" && tracks.length ? <TrackList tracks={tracks} /> : null}
+            {searchType === "track" && tracks.length ? <TrackList token={token} tracks={tracks} /> : null}
           </div>
+          <WebPlayback token={token} />
         </div>
       )}
     </div>

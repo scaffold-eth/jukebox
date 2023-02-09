@@ -1,7 +1,7 @@
 import { List } from "antd";
 import TrackCard from "./TrackCard";
 
-function TrackList({ tracks }) {
+function TrackList({ tracks, token }) {
   return (
     <List
       style={{
@@ -18,7 +18,7 @@ function TrackList({ tracks }) {
         pageSize: 5,
       }}
       dataSource={tracks}
-      renderItem={item => <TrackCard track={item} />}
+      renderItem={item => <TrackCard track={item} token={token} />}
     />
   );
 }
