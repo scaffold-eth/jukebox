@@ -159,9 +159,9 @@ function Jukebox() {
             }}
           >
             {searchType === "artist" && artists.length ? <ArtistList artists={artists} /> : null}
-            {searchType === "track" && tracks.length ? <TrackList token={token} tracks={tracks} setTracksToPlay={setTracksToPlay}/> : null}
+            {searchType === "track" && tracks.length ? <TrackList token={token} tracks={tracks}/> : null}
           </div>
-          <WebPlayback token = {token} trackToplay={tracksToPlay} />
+          <WebPlayback token = {token} />
         </div>
       )}
     </div>

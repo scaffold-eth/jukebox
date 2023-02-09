@@ -1,6 +1,35 @@
-import { List, Progress } from "antd";
+import { List, Progress , Button} from "antd";
+import SpotifyWebApi from "spotify-web-api-node";
+import {useEffect} from "react";
 
-function TrackCard({ track }) {
+const spotifyApi = new SpotifyWebApi({
+  client_id: process.env.REACT_APP_SPOTIFY_CLIENT_ID
+})
+
+function TrackCard({ track, token }) {
+  useEffect(()=> {
+    if(!token) return
+    spotifyApi.setAccessToken(token)
+    console.log(token)
+  },[token])
+  
+  async function addToQueue(track){
+    console.log("play :" , track.uri)
+    try{
+      spotifyApi.addToQueue([track.uri])
+    }catch(err) {
+      console.error(err)
+    }
+  }
+
+  async function play(track){
+    try{
+      spotifyApi.play({uris: [track.uri]})
+    }catch(err) {
+      console.error(err)
+    }
+  }
+
   function millisToMinutesAndSeconds(millis) {
     const minutes = Math.floor(millis / 60000);
     const seconds = ((millis % 60000) / 1000).toFixed(0);
@@ -32,6 +61,8 @@ function TrackCard({ track }) {
         <div>
           <span>Album: {album.name}</span>
         </div>
+        <Button onClick={() => addToQueue(track)}>Add to Queue</Button>
+        <Button onClick={() => play(track)}>Play</Button>
       </div>
     </List.Item>
   );

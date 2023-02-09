@@ -7,7 +7,7 @@ const track = {
   artists: [{ name: "" }],
 };
 
-function WebPlayback({ token, trackToplay }) {
+function WebPlayback({ token }) {
   const [player, setPlayer] = useState(undefined);
   const [is_paused, setPaused] = useState(false);
   const [is_active, setActive] = useState(false);
