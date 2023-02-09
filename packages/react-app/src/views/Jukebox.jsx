@@ -3,6 +3,8 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import TrackList from "../components/TrackList";
 import ArtistList from "../components/ArtistList";
+import { SpotifyLogin } from "../components";
+import WebPlayback from "../components/WebPlayback";
 
 function Jukebox() {
   // const [results, setResults] = useState([]);
@@ -12,7 +14,7 @@ function Jukebox() {
   const [artists, setArtists] = useState([]);
   const [tracks, setTracks] = useState([]);
 
-  // const fetchTracks = (albumId, callback) => {
+    // const fetchTracks = (albumId, callback) => {
   //   fetch({
   //     url: "https://api.spotify.com/v1/albums/" + albumId,
   //     success: function (response) {
@@ -35,6 +37,7 @@ function Jukebox() {
   //     },
   //   });
   // };
+
 
   const search = async () => {
     // todo: add track search
@@ -85,21 +88,16 @@ function Jukebox() {
   };
 
   useEffect(() => {
-    const hash = window.location.hash;
-    let token = window.localStorage.getItem("token");
 
-    if (!token && hash) {
-      token = hash
-        .substring(1)
-        .split("&")
-        .find(elem => elem.startsWith("access_token"))
-        .split("=")[1];
-
-      window.location.hash = "";
-      window.localStorage.setItem("token", token);
+    async function getToken() { //todo to move in a hook or something
+      const response = await fetch('/auth/token');
+      const json = await response.json();
+      setToken(json.accessToken);
+      window.localStorage.setItem("token", json.accessToken);
     }
+    //todo manage refresh token
+    getToken();
 
-    setToken(token);
   }, []);
 
   const searchTypeChanged = e => {
@@ -110,12 +108,7 @@ function Jukebox() {
   return (
     <div class="container">
       {!token ? (
-        <a
-          style={{ marginTop: "20px" }}
-          href={`${process.env.REACT_APP_AUTH_ENDPOINT}?client_id=${process.env.REACT_APP_SPOTIFY_CLIENT_ID}&redirect_uri=${process.env.REACT_APP_REDIRECT_URI}&response_type=${process.env.REACT_APP_RESPONSE_TYPE}`}
-        >
-          Login to Spotify
-        </a>
+        <SpotifyLogin /> 
       ) : (
         <div>
           <button style={{ marginTop: "20px", color: "black" }} onClick={logout}>
@@ -166,8 +159,9 @@ function Jukebox() {
             }}
           >
             {searchType === "artist" && artists.length ? <ArtistList artists={artists} /> : null}
-            {searchType === "track" && tracks.length ? <TrackList tracks={tracks} /> : null}
+            {searchType === "track" && tracks.length ? <TrackList token={token} tracks={tracks} setTracksToPlay={setTracksToPlay}/> : null}
           </div>
+          <WebPlayback token = {token} trackToplay={tracksToPlay} />
         </div>
       )}
     </div>
