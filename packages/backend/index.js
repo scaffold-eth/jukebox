@@ -10,10 +10,12 @@
 const express = require("express"); // Express web server framework
 const request = require("request"); // "Request" library
 const querystring = require("querystring");
+const cookieParser=require("cookie-parser");
+require("dotenv").config();
 
-const clientId = "clientId"; // Your client id
-const clientSecret = "clientSecret"; // Your secret
-const redirectUri = "redirectUri"; // Your redirect uri
+const client_id = process.env.SPOTIFY_CLIENT_ID; // Your client id
+const clientSecret = process.env.SPOTIFY_CLIENT_SECRET; // Your secret
+const redirect_uri = process.env.SPOTIFY_CALLBACK_URI; // Your redirect uri
 
 /**
  * Generates a random string containing numbers and letters
@@ -36,28 +38,29 @@ const stateKey = "spotify_auth_state";
 
 const app = express();
 
+app.use(cookieParser());
+
 app.get("/login", function (req, res) {
   const state = generateRandomString(16);
   res.cookie(stateKey, state);
 
   // your application requests authorization
   const scope = "user-read-private user-read-email";
-  res.redirect(
-    "https://accounts.spotify.com/authorize?" +
-      querystring.stringify({
-        response_type: "code",
-        clientId,
-        scope,
-        redirectUri,
-        state,
-      })
-  );
+
+  res.redirect("https://accounts.spotify.com/authorize?" +
+    querystring.stringify({
+      response_type: "code",
+      client_id,
+      scope,
+      redirect_uri,
+      state
+    }));
 });
 
 app.get("/callback", function (req, res) {
   // your application requests refresh and access tokens
   // after checking the state parameter
-
+  
   const code = req.query.code || null;
   const state = req.query.state || null;
   const storedState = req.cookies ? req.cookies[stateKey] : null;
@@ -75,14 +78,14 @@ app.get("/callback", function (req, res) {
       url: "https://accounts.spotify.com/api/token",
       form: {
         code,
-        redirectUri,
+        redirect_uri,
         grant_type: "authorization_code",
       },
       headers: {
         Authorization:
           "Basic " +
           // eslint-disable-next-line no-buffer-constructor
-          new Buffer(clientId + ":" + clientSecret).toString("base64"),
+          new Buffer(client_id + ":" + clientSecret).toString("base64"),
       },
       json: true,
     };
@@ -106,7 +109,7 @@ app.get("/callback", function (req, res) {
 
         // we can also pass the token to the browser to make requests from there
         res.redirect(
-          "/#" +
+          "http://localhost:3000/#" + //to be replaced by the front url
             querystring.stringify({
               access_token: accessToken,
               refresh_token: refreshToken,
