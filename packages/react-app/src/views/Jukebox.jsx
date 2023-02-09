@@ -104,12 +104,12 @@ function Jukebox() {
   };
 
   return (
-    <div class="container">
+    <div className="">
       {!token ? (
         <SpotifyLogin />
       ) : (
         <div>
-          <button style={{ marginTop: "20px", color: "black" }} onClick={logout}>
+          <button className="mt-5 text-black" onClick={logout}>
             Logout
           </button>
           <h1>
@@ -131,7 +131,7 @@ function Jukebox() {
             </Radio.Group>
             {/* todo: add a select for which type of search they want ie: artist, track, etc. */}
             <input
-              style={{ color: "black", margin: "10px" }}
+              className="text-black focus:outline-none focus:border-[2px] m-[10px]"
               type="text"
               onChange={e => {
                 onQueryChange(e);
@@ -147,15 +147,7 @@ function Jukebox() {
               Search
             </Button>
           </div>
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "row",
-              flexWrap: "wrap",
-              marginTop: "15px",
-              padding: "5px",
-            }}
-          >
+          <div className="flex flex-wrap justify-center items-center  mt-[15px] p-[5px]">
             {searchType === "artist" && artists.length ? <ArtistList artists={artists} /> : null}
             {searchType === "track" && tracks.length ? <TrackList token={token} tracks={tracks} /> : null}
           </div>
