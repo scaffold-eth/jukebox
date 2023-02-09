@@ -14,7 +14,7 @@ function Jukebox() {
   const [artists, setArtists] = useState([]);
   const [tracks, setTracks] = useState([]);
 
-    // const fetchTracks = (albumId, callback) => {
+  // const fetchTracks = (albumId, callback) => {
   //   fetch({
   //     url: "https://api.spotify.com/v1/albums/" + albumId,
   //     success: function (response) {
@@ -37,7 +37,6 @@ function Jukebox() {
   //     },
   //   });
   // };
-
 
   const search = async () => {
     // todo: add track search
@@ -88,16 +87,15 @@ function Jukebox() {
   };
 
   useEffect(() => {
-
-    async function getToken() { //todo to move in a hook or something
-      const response = await fetch('/auth/token');
+    async function getToken() {
+      //todo to move in a hook or something
+      const response = await fetch("/auth/token");
       const json = await response.json();
       setToken(json.accessToken);
       window.localStorage.setItem("token", json.accessToken);
     }
     //todo manage refresh token
     getToken();
-
   }, []);
 
   const searchTypeChanged = e => {
@@ -108,7 +106,7 @@ function Jukebox() {
   return (
     <div class="container">
       {!token ? (
-        <SpotifyLogin /> 
+        <SpotifyLogin />
       ) : (
         <div>
           <button style={{ marginTop: "20px", color: "black" }} onClick={logout}>
@@ -159,9 +157,9 @@ function Jukebox() {
             }}
           >
             {searchType === "artist" && artists.length ? <ArtistList artists={artists} /> : null}
-            {searchType === "track" && tracks.length ? <TrackList token={token} tracks={tracks}/> : null}
+            {searchType === "track" && tracks.length ? <TrackList token={token} tracks={tracks} /> : null}
           </div>
-          <WebPlayback token = {token} />
+          <WebPlayback token={token} />
         </div>
       )}
     </div>

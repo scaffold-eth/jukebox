@@ -1,32 +1,32 @@
-import { List, Progress , Button} from "antd";
+import { List, Progress, Button } from "antd";
 import SpotifyWebApi from "spotify-web-api-node";
-import {useEffect} from "react";
+import { useEffect } from "react";
 
 const spotifyApi = new SpotifyWebApi({
-  client_id: process.env.REACT_APP_SPOTIFY_CLIENT_ID
-})
+  client_id: process.env.REACT_APP_SPOTIFY_CLIENT_ID,
+});
 
 function TrackCard({ track, token }) {
-  useEffect(()=> {
-    if(!token) return
-    spotifyApi.setAccessToken(token)
-    console.log(token)
-  },[token])
-  
-  async function addToQueue(track){
-    console.log("play :" , track.uri)
-    try{
-      spotifyApi.addToQueue([track.uri])
-    }catch(err) {
-      console.error(err)
+  useEffect(() => {
+    if (!token) return;
+    spotifyApi.setAccessToken(token);
+    console.log(token);
+  }, [token]);
+
+  async function addToQueue(track) {
+    console.log("play :", track.uri);
+    try {
+      spotifyApi.addToQueue([track.uri]);
+    } catch (err) {
+      console.error(err);
     }
   }
 
-  async function play(track){
-    try{
-      spotifyApi.play({uris: [track.uri]})
-    }catch(err) {
-      console.error(err)
+  async function play(track) {
+    try {
+      spotifyApi.play({ uris: [track.uri] });
+    } catch (err) {
+      console.error(err);
     }
   }
 
