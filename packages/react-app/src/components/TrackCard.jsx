@@ -1,4 +1,5 @@
 import { List, Progress } from "antd";
+import Player from "./Player";
 
 function TrackCard({ track }) {
   function millisToMinutesAndSeconds(millis) {
@@ -32,6 +33,7 @@ function TrackCard({ track }) {
         <div>
           <span>Album: {album.name}</span>
         </div>
+        <Player artist={track} isPlaying={false} progressMs={500000} />
       </div>
     </List.Item>
   );
