@@ -1,5 +1,7 @@
+import { Progress, Button } from "antd";
+import { green } from "@ant-design/colors";
 import React, { useState, useEffect } from "react";
-import Player from "./Player";
+
 const track = {
   name: "",
   album: {
@@ -20,6 +22,7 @@ function WebPlayback({ token }) {
 
   // },[trackToplay])
 
+  //https://api.spotify.com/v1/me/player/queue
   useEffect(() => {
     const script = document.createElement("script");
     script.src = "https://sdk.scdn.co/spotify-player.js";
@@ -33,7 +36,7 @@ function WebPlayback({ token }) {
         getOAuthToken: cb => {
           cb(token);
         },
-        volume: 0.5,
+        volume: 1,
       });
 
       setPlayer(player);
@@ -54,6 +57,7 @@ function WebPlayback({ token }) {
         setTrack(state.track_window.current_track);
         setPaused(state.paused);
         console.log("player satate : ", state);
+        console.log(current_track);
 
         player.getCurrentState().then(state => {
           !state ? setActive(false) : setActive(true);
@@ -77,34 +81,39 @@ function WebPlayback({ token }) {
   } else {
     return (
       <>
-        <Player artist={track} isPlaying={false} progressMs={500} />
-
-        <button
-          className="btn-spotify"
-          onClick={() => {
-            player.previousTrack();
-          }}
-        >
-          &lt;&lt;
-        </button>
-
-        <button
-          className="btn-spotify"
-          onClick={() => {
-            player.togglePlay();
-          }}
-        >
-          {is_paused ? "PLAY" : "PAUSE"}
-        </button>
-
-        <button
-          className="btn-spotify"
-          onClick={() => {
-            player.nextTrack();
-          }}
-        >
-          &gt;&gt;
-        </button>
+        <div className="flex flex-row justify-between mb-10">
+          <div className="flex flex-row mt-5">
+            <div className="flex align-middle h-10 w-10 mr-2">
+              <img
+                style={{ borderRadius: "50%" }}
+                src={current_track?.album?.images[0]?.url}
+                alt={current_track?.name}
+              />
+            </div>
+            <div className="mr-2">
+              <Button
+                className=""
+                // disabled={}
+                onClick={() => {
+                  console.log("play/pause");
+                  player.togglePlay();
+                }}
+              >
+                {is_paused ? "Play" : "Pause"}
+              </Button>
+            </div>
+            <div className="mt-1">
+              <Progress
+                className="mx-2 h-6"
+                size="small"
+                percent={55.5}
+                steps={50}
+                strokeWidth={6}
+                strokeColor={green[6]}
+              />
+            </div>
+          </div>
+        </div>
       </>
     );
   }
