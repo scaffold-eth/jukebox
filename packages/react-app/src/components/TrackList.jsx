@@ -2,6 +2,7 @@ import { List } from "antd";
 import TrackCard from "./TrackCard";
 
 function TrackList({ tracks, token }) {
+  //todo add a sort button to sort by popularity or alphabets or whaterver
   return (
     <List
       style={{
@@ -15,7 +16,7 @@ function TrackList({ tracks, token }) {
         onChange: page => {
           console.log(page);
         },
-        pageSize: 5,
+        pageSize: 10,
       }}
       dataSource={tracks}
       renderItem={item => <TrackCard track={item} token={token} />}

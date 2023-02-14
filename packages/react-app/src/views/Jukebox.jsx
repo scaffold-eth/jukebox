@@ -5,6 +5,7 @@ import TrackList from "../components/TrackList";
 import ArtistList from "../components/ArtistList";
 import { SpotifyLogin } from "../components";
 import WebPlayback from "../components/WebPlayback";
+import Search from "antd/lib/input/Search";
 
 function Jukebox() {
   // const [results, setResults] = useState([]);
@@ -51,7 +52,7 @@ function Jukebox() {
         },
         params: {
           q: searchKey,
-          type: searchType ?? "artist",
+          type: searchType ?? "",
         },
       })
       .then(res => {
@@ -75,8 +76,7 @@ function Jukebox() {
     setSearchKey(e.target.value);
   };
 
-  const submitSearch = e => {
-    e.preventDefault();
+  const submitSearch = () => {
     console.log("searching for", searchKey);
     search(searchKey);
   };
@@ -101,6 +101,7 @@ function Jukebox() {
   const searchTypeChanged = e => {
     setSearchKey("");
     setSearchType(e.target.value);
+    search(searchKey);
   };
 
   return (
@@ -118,40 +119,39 @@ function Jukebox() {
           <p>
             Type {searchType === "artist" ? "an" : "a"} {searchType} name and click on "Search".
           </p>
-          <div id="search-form">
-            <Radio.Group
-              onChange={e => {
-                searchTypeChanged(e);
-              }}
-              defaultValue="artist"
-              buttonStyle="solid"
-            >
-              <Radio.Button value="artist">Artist</Radio.Button>
-              <Radio.Button value="track">Track</Radio.Button>
-            </Radio.Group>
+          <div id="search-form" style={{ maxWidth: "1040px", margin: "auto" }}>
             {/* todo: add a select for which type of search they want ie: artist, track, etc. */}
-            <input
+            <Search
               className="text-black focus:outline-none focus:border-[2px] m-[10px]"
               type="text"
               onChange={e => {
                 onQueryChange(e);
               }}
+              onSearch={() => {
+                submitSearch();
+              }}
               value={searchKey}
               placeholder={`Type ${searchType} name...`}
             />
-            <Button
-              onClick={e => {
-                submitSearch(e);
+            <Radio.Group
+              onChange={e => {
+                searchTypeChanged(e);
               }}
+              defaultValue=""
+              buttonStyle="solid"
             >
-              Search
-            </Button>
+              <Radio.Button value="">All</Radio.Button>
+              <Radio.Button value="artist">Artist</Radio.Button>
+              <Radio.Button value="track">Track</Radio.Button>
+            </Radio.Group>
           </div>
           <div className="flex flex-wrap justify-center items-center  mt-[15px] p-[5px]">
             {searchType === "artist" && artists.length ? <ArtistList artists={artists} /> : null}
             {searchType === "track" && tracks.length ? <TrackList token={token} tracks={tracks} /> : null}
           </div>
-          <WebPlayback token={token} />
+          <div className="flex justify-center">
+            <WebPlayback token={token} />
+          </div>
         </div>
       )}
     </div>

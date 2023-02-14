@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import Player from "./Player";
 const track = {
   name: "",
   album: {
@@ -52,6 +53,7 @@ function WebPlayback({ token }) {
 
         setTrack(state.track_window.current_track);
         setPaused(state.paused);
+        console.log("player satate : ", state);
 
         player.getCurrentState().then(state => {
           !state ? setActive(false) : setActive(true);
@@ -75,43 +77,34 @@ function WebPlayback({ token }) {
   } else {
     return (
       <>
-        <div className="container">
-          <div className="main-wrapper">
-            <img src={current_track.album.images[0].url} className="now-playing__cover" alt="" />
+        <Player artist={track} isPlaying={false} progressMs={500} />
 
-            <div className="now-playing__side">
-              <div className="now-playing__name">{current_track.name}</div>
-              <div className="now-playing__artist">{current_track.artists[0].name}</div>
+        <button
+          className="btn-spotify"
+          onClick={() => {
+            player.previousTrack();
+          }}
+        >
+          &lt;&lt;
+        </button>
 
-              <button
-                className="btn-spotify"
-                onClick={() => {
-                  player.previousTrack();
-                }}
-              >
-                &lt;&lt;
-              </button>
+        <button
+          className="btn-spotify"
+          onClick={() => {
+            player.togglePlay();
+          }}
+        >
+          {is_paused ? "PLAY" : "PAUSE"}
+        </button>
 
-              <button
-                className="btn-spotify"
-                onClick={() => {
-                  player.togglePlay();
-                }}
-              >
-                {is_paused ? "PLAY" : "PAUSE"}
-              </button>
-
-              <button
-                className="btn-spotify"
-                onClick={() => {
-                  player.nextTrack();
-                }}
-              >
-                &gt;&gt;
-              </button>
-            </div>
-          </div>
-        </div>
+        <button
+          className="btn-spotify"
+          onClick={() => {
+            player.nextTrack();
+          }}
+        >
+          &gt;&gt;
+        </button>
       </>
     );
   }

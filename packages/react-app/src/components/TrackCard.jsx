@@ -40,29 +40,43 @@ function TrackCard({ track, token }) {
   return (
     <List.Item
       key={id}
+      style={{ padding: "5px", fontSize: "0.9em" }}
       extra={
-        <div style={{ display: "flex", flexDirection: "column" }}>
-          <img width={100} alt={name} src={album.images[0].url} />
-          <span>Duration: {millisToMinutesAndSeconds(duration)}</span>
+        <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+          <img style={{ borderRadius: "50%", overflow: "hidden" }} width={35} alt={name} src={album.images[0].url} />
+          <span style={{ fontSize: "0.75em" }}>Duration: {millisToMinutesAndSeconds(duration)}</span>
         </div>
       }
     >
-      <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-start" }}>
-        <div>
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "10% 28% 24% 28% 10%",
+          justifyContent: "space-evenly",
+          textAlign: "left",
+        }}
+      >
+        <div style={{ width: "75px" }}>
           <span>Popularity:</span>
           <Progress percent={track.popularity} />
         </div>
-        <div>
-          <span>Track: {name}</span>
+        <div style={{ cursor: "pointer" }}>
+          <span>{name}</span>
         </div>
         <div>
-          <span>Artist: {artists[0].name}</span>
+          <span>{artists[0].name}</span>
         </div>
         <div>
-          <span>Album: {album.name}</span>
+          <span>{album.name}</span>
         </div>
-        <Button onClick={() => addToQueue(track)}>Add to Queue</Button>
-        <Button onClick={() => play(track)}>Play</Button>
+        <div className="flex">
+          <Button alt={"Add to Queue"} onClick={() => addToQueue(track)}>
+            Add
+          </Button>
+          <Button alt={"Play"} onClick={() => play(track)}>
+            Play
+          </Button>
+        </div>
       </div>
     </List.Item>
   );
