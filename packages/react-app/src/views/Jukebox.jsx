@@ -1,4 +1,4 @@
-import { Button, Radio } from "antd";
+import { Button, Divider, Radio } from "antd";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import TrackList from "../components/TrackList";
@@ -11,7 +11,7 @@ function Jukebox() {
   // const [results, setResults] = useState([]);
   const [token, setToken] = useState("");
   const [searchKey, setSearchKey] = useState("");
-  const [searchType, setSearchType] = useState("artist");
+  const [searchType, setSearchType] = useState("track");
   const [artists, setArtists] = useState([]);
   const [tracks, setTracks] = useState([]);
   const [albums, setAlbums] = useState([]);
@@ -53,13 +53,13 @@ function Jukebox() {
         },
         params: {
           q: searchKey,
-          type: "artist,album,track",
+          type: "track,artist,album",
         },
       })
       .then(res => {
         console.log("res", res.data);
-        setArtists(res.data.artists.items);
         setTracks(res.data.tracks.items);
+        setArtists(res.data.artists.items);
         setAlbums(res.data.albums.items);
       })
       .catch(err => {
@@ -107,7 +107,7 @@ function Jukebox() {
       {!token ? (
         <SpotifyLogin />
       ) : (
-        <div>
+        <div className="relative">
           <button className="mt-5 text-black" onClick={logout}>
             Logout
           </button>
@@ -148,8 +148,11 @@ function Jukebox() {
             {searchType === "artist" && artists.length ? <ArtistList artists={artists} /> : null}
             {searchType === "album" && tracks.length ? <TrackList token={token} tracks={tracks} /> : null}
           </div>
-          <div className="fixed bottom-0">
-            <WebPlayback token={token} />
+          <div className="min-h-145" style={{ minHeight: "150px" }}></div>
+          <div className="flex flex-row justify-center m-auto">
+            <div className="fixed bottom-0">
+              <WebPlayback token={token} />
+            </div>
           </div>
         </div>
       )}
