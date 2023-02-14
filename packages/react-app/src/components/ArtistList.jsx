@@ -15,16 +15,7 @@ function ArtistList({ artists }) {
               <div>No Image</div>
             )}
           </div>
-          <div>
-            {artist.uri ? (
-              <div>
-                <SpotifyPlayer uri={artist.uri} view="list" theme="black" />
-                {/* todo: <Player artist={artist} isPlaying={false} progressMs={0} /> */}
-              </div>
-            ) : (
-              <span>No URI</span>
-            )}
-          </div>
+          <div>{artist.uri ? <p>todo</p> : <span>No URI</span>}</div>
         </div>
       </div>
     );
@@ -37,7 +28,7 @@ function ArtistList({ artists }) {
         onChange: page => {
           console.log(page);
         },
-        pageSize: 6,
+        pageSize: 10,
       }}
       className=""
       renderItem={item => renderArtistCard(item)}
