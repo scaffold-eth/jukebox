@@ -14,6 +14,7 @@ function Jukebox() {
   const [searchType, setSearchType] = useState("artist");
   const [artists, setArtists] = useState([]);
   const [tracks, setTracks] = useState([]);
+  const [albums, setAlbums] = useState([]);
 
   // const fetchTracks = (albumId, callback) => {
   //   fetch({
@@ -52,17 +53,14 @@ function Jukebox() {
         },
         params: {
           q: searchKey,
-          type: searchType ?? "",
+          type: "artist,album,track",
         },
       })
       .then(res => {
-        console.log("res", res);
-        if (searchType === "artist") {
-          setArtists(res.data.artists.items);
-        }
-        if (searchType === "track") {
-          setTracks(res.data.tracks.items);
-        }
+        console.log("res", res.data);
+        setArtists(res.data.artists.items);
+        setTracks(res.data.tracks.items);
+        setAlbums(res.data.albums.items);
       })
       .catch(err => {
         console.log("err", { err });
@@ -76,9 +74,9 @@ function Jukebox() {
     setSearchKey(e.target.value);
   };
 
-  const submitSearch = () => {
+  const submitSearch = e => {
     console.log("searching for", searchKey);
-    search(searchKey);
+    search(searchKey, e);
   };
 
   const logout = () => {
@@ -98,11 +96,11 @@ function Jukebox() {
     getToken();
   }, []);
 
-  const searchTypeChanged = e => {
-    setSearchKey("");
-    setSearchType(e.target.value);
-    search(searchKey);
-  };
+  // const searchTypeChanged = e => {
+  //   setSearchKey("");
+  //   setSearchType(e.target.value);
+  //   search(searchKey);
+  // };
 
   return (
     <div className="">
@@ -135,21 +133,22 @@ function Jukebox() {
             />
             <Radio.Group
               onChange={e => {
-                searchTypeChanged(e);
+                setSearchType(e.target.value);
               }}
-              defaultValue=""
+              defaultValue="track"
               buttonStyle="solid"
             >
-              <Radio.Button value="">All</Radio.Button>
-              <Radio.Button value="artist">Artist</Radio.Button>
               <Radio.Button value="track">Track</Radio.Button>
+              <Radio.Button value="artist">Artist</Radio.Button>
+              <Radio.Button value="album">Album</Radio.Button>
             </Radio.Group>
           </div>
           <div className="flex flex-wrap justify-center items-center  mt-[15px] p-[5px]">
-            {searchType === "artist" && artists.length ? <ArtistList artists={artists} /> : null}
             {searchType === "track" && tracks.length ? <TrackList token={token} tracks={tracks} /> : null}
+            {searchType === "artist" && artists.length ? <ArtistList artists={artists} /> : null}
+            {searchType === "album" && tracks.length ? <TrackList token={token} tracks={tracks} /> : null}
           </div>
-          <div className="flex justify-center">
+          <div className="fixed bottom-0">
             <WebPlayback token={token} />
           </div>
         </div>
