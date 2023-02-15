@@ -108,19 +108,18 @@ function Jukebox() {
         <SpotifyLogin />
       ) : (
         <div className="relative">
-          <button className="mt-5 text-black" onClick={logout}>
-            Logout
-          </button>
-          <h1>
-            Search for {searchType === "artist" ? "an" : "a"} {searchType}
-          </h1>
-          <p>
-            Type {searchType === "artist" ? "an" : "a"} {searchType} name and click on "Search".
-          </p>
+          <div className="flex justify-center">
+            <div className=" absolute top-[-150px]">
+              <Button className="mt-5 text-black" onClick={logout}>
+                Logout
+              </Button>
+            </div>
+          </div>
+
           <div id="search-form" style={{ maxWidth: "1040px", margin: "auto" }}>
             {/* todo: add a select for which type of search they want ie: artist, track, etc. */}
             <Search
-              className="text-black focus:outline-none focus:border-[2px] m-[10px]"
+              className="text-black focus:outline-none focus:border-[2px]"
               type="text"
               onChange={e => {
                 onQueryChange(e);
@@ -129,7 +128,7 @@ function Jukebox() {
                 submitSearch();
               }}
               value={searchKey}
-              placeholder={`Type ${searchType} name...`}
+              placeholder={`Search Track, Artist or Album...`}
             />
             <Radio.Group
               onChange={e => {

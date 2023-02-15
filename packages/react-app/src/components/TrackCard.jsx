@@ -43,7 +43,7 @@ function TrackCard({ track, token }) {
       style={{ padding: "5px", fontSize: "0.9em" }}
       extra={
         <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
-          <img style={{ borderRadius: "50%", overflow: "hidden" }} width={35} alt={name} src={album.images[0].url} />
+          <img style={{ borderRadius: "50%", overflow: "hidden" }} width={40} alt={name} src={album.images[0].url} />
           <span style={{ fontSize: "0.75em" }}>Duration: {millisToMinutesAndSeconds(duration)}</span>
         </div>
       }
@@ -54,10 +54,10 @@ function TrackCard({ track, token }) {
           gridTemplateColumns: "10% 28% 24% 28% 10%",
           justifyContent: "space-evenly",
           textAlign: "left",
+          alignItems: "center",
         }}
       >
         <div style={{ width: "75px" }}>
-          <span>Popularity:</span>
           <Progress percent={track.popularity} />
         </div>
         <div style={{ cursor: "pointer" }}>
